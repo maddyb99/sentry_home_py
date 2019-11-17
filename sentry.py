@@ -43,7 +43,6 @@ def face_detect(orig):
 def show_fb():
     cam=cv2.VideoCapture(0)
     while True:
-        doDutyCycle(12)
         doDutyCycle(10)
         doDutyCycle(8)
         doDutyCycle(6)
@@ -54,7 +53,7 @@ def show_fb():
         doDutyCycle(8)
         doDutyCycle(10)
         ret, frame=cam.read()
-        cv2.imshow("FrameBuffer2", face_detect(frame))
+        #cv2.imshow("FrameBuffer2", face_detect(frame))
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
         
