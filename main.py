@@ -1,6 +1,18 @@
 import time
 import numpy as np
 import cv2
+import asyncio
+import firebase_admin
+from firebase_admin import credentials,firestore,storage
+
+cred = credentials.Certificate("./servicekey.json")
+firebase_admin.initialize_app(cred)
+# {
+#     'storageBucket':'gs://sentryhome-c84fb.appspot.com'
+# })
+db=firestore.client()
+ref=db.collection("Options").document("isArmed")
+doc=None
 # from pykeyboard import PyKeyboard
 faceCascade = cv2.CascadeClassifier("haarcascade_default.xml")
 
@@ -9,9 +21,9 @@ def face_detect(orig):
     gray=cv2.cvtColor(orig,cv2.COLOR_BGR2GRAY)
     faces = faceCascade.detectMultiScale(
         gray,
-        scaleFactor=1.2,
+        scaleFactor=1.1,
         minNeighbors=5,
-        minSize=(30, 30),
+        minSize=(20, 20),
         # flags = cv2.cv.CV_HAAR_SCALE_IMAGE
     )
     i=1
@@ -22,13 +34,44 @@ def face_detect(orig):
         i=i+1
     return orig
 
+def fire_and_forget(f):
+    def wrapped(*args, **kwargs):
+        return asyncio.get_event_loop().run_in_executor(None, f, *args, *kwargs)
+
+    return wrapped
+
+@fire_and_forget
+def get_data():
+    global doc
+    try:
+        doc=ref.get()
+        # print(doc.to_dict())
+        # return await True
+    except:
+        print("not found")
+
 def show_fb():
     cam=cv2.VideoCapture(0)
+    # doc=None
+    global doc
+    try:
+        doc=ref.get()
+        print(doc.to_dict())
+    except:
+        print("not found")
     while True:
         ret, frame=cam.read()
-        cv2.imshow("FrameBuffer2", face_detect(frame))
+        print(doc.to_dict()["check"])
+        if(doc.to_dict()["check"]):
+            cv2.imshow("FrameBuffer2", face_detect(frame))
+        else:
+            cv2.imshow("FrameBuffer2",frame)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
+        # if("ALL COMPLETED"==asyncio.ALL_COMPLETED):
+        asyncio.ensure_future(get_data())
+        print(asyncio.ALL_COMPLETED)
+        #     get_data(doc=doc)
     cam.release()
     # cv2.waitKey(0)
 
