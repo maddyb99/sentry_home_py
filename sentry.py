@@ -60,10 +60,14 @@ def show_fb():
     print("here")
     camera = PiCamera()
     camera.resolution = (1024, 768)
-    camera.start_preview()
-    cam=cv2.VideoCapture(0)
+    camera.framerate=24
+    frame = np.empty((1024 * 768 * 3,), dtype=np.uint8)
+    # camera.start_preview()
+    # cam=cv2.VideoCapture(0)
     while True:
-        ret, frame=cam.read()
+        # ret, frame=cam.read()
+        camera.capture(frame, 'bgr')
+        frame=frame.reshape((1024,768,3))
         #cv2.imshow("FrameBuffer2", face_detect(frame))
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
