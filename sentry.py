@@ -6,13 +6,20 @@ import cv2
 import RPi.GPIO as GPIO
 import firebase_admin
 from firebase_admin import credentials,firestore,storage
+from os import listdir
+from os.path import isfile, join
+from random import seed
+from random import random
+from playsound import playsound
+
+seed(1)
 
 cred = credentials.Certificate("./servicekey.json")
 firebase_admin.initialize_app(cred)
 db=firestore.client()
 ref=db.collection("Options").document("isArmed")
 doc=None
-
+face_no=0
 faceCascade = cv2.CascadeClassifier("haarcascade_default.xml")
 
 servoPIN = 11
@@ -56,7 +63,21 @@ def get_data():
     except:
         print("not found")
 
+
+@fire_and_forget
+def play_scream(number):
+    onlyfiles = [f for f in listdir("./Scream") if isfile(join("./Scream", f))]
+    # print(onlyfiles)
+    screams=[]
+    for i in range(number):
+        val=1+int(random()*number)
+        # print(val)
+        screams.append(onlyfiles[val])
+        print("./Scream/"+onlyfiles[val])
+        playsound("./Scream/"+onlyfiles[val])
+
 def face_detect(orig):
+    global face_no
     # normalized=cv2.normalize(orig,normalized,1,255,cv2.NORM_MINMAX)
     gray=cv2.cvtColor(orig,cv2.COLOR_BGR2GRAY)
     faces = faceCascade.detectMultiScale(
@@ -66,12 +87,15 @@ def face_detect(orig):
         minSize=(30, 30),
         # flags = cv2.cv.CV_HAAR_SCALE_IMAGE
     )
-    i=1
-    for (x, y, w, h) in faces:
-        cv2.rectangle(orig, (x, y), (x+w, y+h), (0, 255, 0), 2)
-        # cv2.imshow("face "+str(i),orig[y:y+h,x:x+h])
-        # cv2.destroyWindow("face "+str(i+1))
-        i=i+1
+    if len(faces)>0:
+        # play_scream(len(faces))
+        if not len(faces) == face_no:
+            face_no=len(faces)
+            asyncio.ensure_future(play_scream(len(faces)))
+        for (x, y, w, h) in faces:
+            cv2.rectangle(orig, (x, y), (x+w, y+h), (0, 255, 0), 2)
+            # cv2.imshow("face "+str(i),orig[y:y+h,x:x+h])
+            # cv2.destroyWindow("face "+str(i+1))
     return orig
 
 def show_fb():
