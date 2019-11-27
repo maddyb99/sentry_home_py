@@ -51,7 +51,7 @@ def get_data():
     global doc
     try:
         doc=ref.get()
-        # print(doc.to_dict())
+        #print(doc.to_dict())
         # return await True
     except:
         print("not found")
@@ -76,6 +76,7 @@ def face_detect(orig):
 
 def show_fb():
     print("here")
+    global doc
     camera = PiCamera()
     camera.resolution = (640, 480)
     camera.framerate=24
@@ -86,11 +87,15 @@ def show_fb():
         doc=ref.get()
         print(doc.to_dict())
     except:
-        print("not found")
+        print('Not found!')
+
+    #get_data()
+    #print(doc.to_dict())
     while True:
         # ret, frame=cam.read()
         camera.capture(frame, 'bgr')
         frame=frame.reshape((480,640,3))
+        print(doc.to_dict())
         if(doc.to_dict()["check"]):
             cv2.imshow("FrameBuffer2", face_detect(frame))
         else:
