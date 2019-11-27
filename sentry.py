@@ -10,7 +10,8 @@ from os import listdir
 from os.path import isfile, join
 from random import seed
 from random import random
-from playsound import playsound
+from pydub import AudioSegment
+from pydub.playback import play
 
 seed(1)
 
@@ -72,9 +73,11 @@ def play_scream(number):
     for i in range(number):
         val=1+int(random()*number)
         # print(val)
+        song=AudioSegment.from_mp3("./Scream/"+onlyfiles[val])
         screams.append(onlyfiles[val])
         print("./Scream/"+onlyfiles[val])
         playsound("./Scream/"+onlyfiles[val])
+        play(song)
 
 def face_detect(orig):
     global face_no
