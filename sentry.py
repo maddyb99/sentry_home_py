@@ -4,6 +4,14 @@ import time
 import numpy as np
 import cv2
 import RPi.GPIO as GPIO
+import firebase_admin
+from firebase_admin import credentials,firestore,storage
+
+cred = credentials.Certificate("./servicekey.json")
+firebase_admin.initialize_app(cred)
+db=firestore.client()
+ref=db.collection("Options").document("isArmed")
+doc=None
 
 faceCascade = cv2.CascadeClassifier("haarcascade_default.xml")
 
@@ -38,6 +46,16 @@ def rot_cam():
         if i==2 or i==10:
             increment=increment*-1
 
+@fire_and_forget
+def get_data():
+    global doc
+    try:
+        doc=ref.get()
+        # print(doc.to_dict())
+        # return await True
+    except:
+        print("not found")
+
 def face_detect(orig):
     # normalized=cv2.normalize(orig,normalized,1,255,cv2.NORM_MINMAX)
     gray=cv2.cvtColor(orig,cv2.COLOR_BGR2GRAY)
@@ -63,14 +81,24 @@ def show_fb():
     camera.framerate=24
     frame = np.empty((480 * 640 * 3,), dtype=np.uint8)
     # camera.start_preview()
-    # cam=cv2.VideoCapture(0)
+    # cam=cv2.VideoCapture(0)global doc
+    try:
+        doc=ref.get()
+        print(doc.to_dict())
+    except:
+        print("not found")
     while True:
         # ret, frame=cam.read()
         camera.capture(frame, 'bgr')
         frame=frame.reshape((480,640,3))
-        cv2.imshow("FrameBuffer2", face_detect(frame))
+        if(doc.to_dict()["check"]):
+            cv2.imshow("FrameBuffer2", face_detect(frame))
+        else:
+            cv2.imshow("FrameBuffer2",frame)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
+        # if("ALL COMPLETED"==asyncio.ALL_COMPLETED):
+        asyncio.ensure_future(get_data())
     cam.release()
     # cv2.waitKey(0)
 
