@@ -20,7 +20,21 @@ def doDutyCycle(ip, t=1.0):
     time.sleep(t)
     GPIO.output(servoPIN, False)
     p.ChangeDutyCycle(0)
+def fire_and_forget(f):
+    def wrapped(*args, **kwargs):
+        return asyncio.get_event_loop().run_in_executor(None, f, *args, *kwargs)
 
+    return wrapped
+
+@fire_and_forget
+def rot_cam():
+    i=10
+    increment = -2
+    while True:
+        doDutyCycle(i)
+        i=i+increment
+        if i==2 or increment==10:
+            increment=increment*-1
 
 def face_detect(orig):
     # normalized=cv2.normalize(orig,normalized,1,255,cv2.NORM_MINMAX)
@@ -43,15 +57,6 @@ def face_detect(orig):
 def show_fb():
     cam=cv2.VideoCapture(0)
     while True:
-        doDutyCycle(10)
-        doDutyCycle(8)
-        doDutyCycle(6)
-        doDutyCycle(4)
-        doDutyCycle(3)
-        doDutyCycle(4)
-        doDutyCycle(6)
-        doDutyCycle(8)
-        doDutyCycle(10)
         ret, frame=cam.read()
         #cv2.imshow("FrameBuffer2", face_detect(frame))
         if cv2.waitKey(1) & 0xFF == ord('q'):
@@ -62,6 +67,7 @@ def show_fb():
 
 
 def main():
+    asyncio.ensure_future(rot_cam())
     show_fb()
 
 
