@@ -99,6 +99,8 @@ def face_detect(orig):
             cv2.rectangle(orig, (x, y), (x+w, y+h), (0, 255, 0), 2)
             # cv2.imshow("face "+str(i),orig[y:y+h,x:x+h])
             # cv2.destroyWindow("face "+str(i+1))
+    else:
+        face_no=0
     return orig
 
 def show_fb():
