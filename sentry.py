@@ -13,7 +13,7 @@ from random import random
 from pydub import AudioSegment
 from pydub.playback import play
 
-seed(1)
+random.seed(time.time())
 
 cred = credentials.Certificate("./servicekey.json")
 firebase_admin.initialize_app(cred)
