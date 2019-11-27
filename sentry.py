@@ -17,7 +17,7 @@ p.start(0) # Initialization
 
 def doDutyCycle(ip, t=1.0):
     GPIO.output(servoPIN, True)
-    print(ip)
+    #print(ip)
     p.ChangeDutyCycle(ip)
     time.sleep(t)
     GPIO.output(servoPIN, False)
@@ -43,7 +43,7 @@ def face_detect(orig):
     gray=cv2.cvtColor(orig,cv2.COLOR_BGR2GRAY)
     faces = faceCascade.detectMultiScale(
         gray,
-        scaleFactor=1.2,
+        scaleFactor=1.1,
         minNeighbors=5,
         minSize=(30, 30),
         # flags = cv2.cv.CV_HAAR_SCALE_IMAGE
@@ -59,16 +59,16 @@ def face_detect(orig):
 def show_fb():
     print("here")
     camera = PiCamera()
-    camera.resolution = (1024, 768)
+    camera.resolution = (640, 480)
     camera.framerate=24
-    frame = np.empty((1024 * 768 * 3,), dtype=np.uint8)
+    frame = np.empty((480 * 640 * 3,), dtype=np.uint8)
     # camera.start_preview()
     # cam=cv2.VideoCapture(0)
     while True:
         # ret, frame=cam.read()
         camera.capture(frame, 'bgr')
-        frame=frame.reshape((1024,768,3))
-        #cv2.imshow("FrameBuffer2", face_detect(frame))
+        frame=frame.reshape((480,640,3))
+        cv2.imshow("FrameBuffer2", face_detect(frame))
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
     cam.release()
