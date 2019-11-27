@@ -76,7 +76,7 @@ def play_scream(number):
         song=AudioSegment.from_mp3("./Scream/"+onlyfiles[val])
         screams.append(onlyfiles[val])
         print("./Scream/"+onlyfiles[val])
-        playsound("./Scream/"+onlyfiles[val])
+        # playsound("./Scream/"+onlyfiles[val])
         play(song)
 
 def face_detect(orig):
