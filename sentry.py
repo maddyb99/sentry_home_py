@@ -1,3 +1,5 @@
+import asyncio
+from picamera import PiCamera
 import time
 import numpy as np
 import cv2
@@ -33,7 +35,7 @@ def rot_cam():
     while True:
         doDutyCycle(i)
         i=i+increment
-        if i==2 or increment==10:
+        if i==2 or i==10:
             increment=increment*-1
 
 def face_detect(orig):
@@ -55,13 +57,16 @@ def face_detect(orig):
     return orig
 
 def show_fb():
+    print("here")
+    camera = PiCamera()
+    camera.resolution = (1024, 768)
+    camera.start_preview()
     cam=cv2.VideoCapture(0)
     while True:
         ret, frame=cam.read()
         #cv2.imshow("FrameBuffer2", face_detect(frame))
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
-        
     cam.release()
     # cv2.waitKey(0)
 
