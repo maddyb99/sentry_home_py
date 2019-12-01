@@ -56,19 +56,15 @@ def play_scream(number):
 
 def face_detect(orig):
     global face_no
-    # normalized=cv2.normalize(orig,normalized,1,255,cv2.NORM_MINMAX)
-    gray=cv2.cvtColor(orig,cv2.COLOR_BGR2GRAY)
+    normalized=cv2.normalize(orig,normalized,1,255,cv2.NORM_MINMAX)
+    gray=cv2.cvtColor(normalized,cv2.COLOR_BGR2GRAY)
     faces = faceCascade.detectMultiScale(
         gray,
         scaleFactor=1.1,
         minNeighbors=5,
         minSize=(20, 20),
-        # flags = cv2.cv.CV_HAAR_SCALE_IMAGE
     )
-    # face_no=0
-    # print(len(faces))
     if len(faces)>0:
-        # play_scream(len(faces))
         if not len(faces) == face_no:
             face_no=len(faces)
             asyncio.ensure_future(play_scream(len(faces)))
@@ -89,7 +85,6 @@ def show_fb():
         print("not found")
     while True:
         ret, frame=cam.read()
-        # print(doc.to_dict()["check"])
         if(doc.to_dict()["check"]):
             cv2.imshow("FrameBuffer2", face_detect(frame))
         else:
@@ -97,11 +92,7 @@ def show_fb():
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
         # if("ALL COMPLETED"==asyncio.ALL_COMPLETED):
-        asyncio.ensure_future(get_data())
-        # print(asyncio.ALL_COMPLETED)
-        #     get_data(doc=doc)
-    cam.release()
-    # cv2.waitKey(0)
+        asyncio.ensure_
 
 
 def main():
