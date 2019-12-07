@@ -24,20 +24,22 @@ face_no=0
 faceCascade = cv2.CascadeClassifier("haarcascade_default.xml")
 
 servoPIN = 11
-GPIO.setmode(GPIO.BOARD)
+buzzerPIN=15
+GPIO.setmode(GPIO.BCM)
 GPIO.setup(servoPIN, GPIO.OUT)
+GPIO.setup(buzzerPIN,GPIO.OUT)
 
-p = GPIO.PWM(servoPIN, 50) # GPIO 17 for PWM with 50Hz
-p.start(0) # Initialization
+#p = GPIO.PWM(servoPIN, 50) # GPIO 17 for PWM with 50Hz
+#p.start(0) # Initialization
 
 
-def doDutyCycle(ip, t=1.0):
-    GPIO.output(servoPIN, True)
+#def doDutyCycle(ip, t=1.0):
+    #GPIO.output(servoPIN, True)
     #print(ip)
-    p.ChangeDutyCycle(ip)
-    time.sleep(t)
-    GPIO.output(servoPIN, False)
-    p.ChangeDutyCycle(0)
+    #p.ChangeDutyCycle(ip)
+    #time.sleep(t)
+    #GPIO.output(servoPIN, False)
+    #p.ChangeDutyCycle(0)
 def fire_and_forget(f):
     def wrapped(*args, **kwargs):
         return asyncio.get_event_loop().run_in_executor(None, f, *args, *kwargs)
@@ -49,7 +51,7 @@ def rot_cam():
     i=10
     increment = -2
     while True:
-        doDutyCycle(i)
+        #doDutyCycle(i)
         i=i+increment
         if i==2 or i==10:
             increment=increment*-1
@@ -76,6 +78,9 @@ def play_scream(number):
         song=AudioSegment.from_mp3("./Scream/"+onlyfiles[val])
         screams.append(onlyfiles[val])
         print("./Scream/"+onlyfiles[val])
+        GPIO.output(buzzerPIN,GPIO.HIGH)
+        time.sleep(0.5)
+        GPIO.output(buzzerPIN,GPIO.LOW)
         # playsound("./Scream/"+onlyfiles[val])
         play(song)
 
