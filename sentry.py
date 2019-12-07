@@ -131,9 +131,10 @@ def show_fb():
         frame=frame.reshape((480,640,3))
         print(doc.to_dict())
         if(doc.to_dict()["check"]):
-            cv2.imshow("FrameBuffer2", face_detect(frame))
-        else:
-            cv2.imshow("FrameBuffer2",frame)
+            face_detect(frame)
+            #cv2.imshow("FrameBuffer2", face_detect(frame))
+        #else:
+            #cv2.imshow("FrameBuffer2",frame)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
         # if("ALL COMPLETED"==asyncio.ALL_COMPLETED):
