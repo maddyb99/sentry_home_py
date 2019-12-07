@@ -129,7 +129,7 @@ def show_fb():
         # ret, frame=cam.read()
         camera.capture(frame, 'bgr')
         frame=frame.reshape((480,640,3))
-        print(doc.to_dict())
+        #print(doc.to_dict())
         if(doc.to_dict()["check"]):
             face_detect(frame)
             #cv2.imshow("FrameBuffer2", face_detect(frame))
